@@ -27,40 +27,6 @@ func NewRenderingContext(templates ...string) RenderingContext {
 	return RenderingContext{templates, nil}
 }
 
-type SatisfyTestOverlayMatcher struct {
-	overlay string
-}
-
-func SatisfyTestOverlay(overlay string) *SatisfyTestOverlayMatcher {
-	return &SatisfyTestOverlayMatcher{overlay}
-}
-
-func (p *SatisfyTestOverlayMatcher) Match(actual interface{}) (bool, error) {
-	rendering, ok := actual.(RenderingContext)
-	if !ok {
-		return false, fmt.Errorf("SatisfyTestOverlay must be passed a RenderingContext. Got\n%s", format.Object(actual, 1))
-	}
-
-	session, err := renderWithData(append(rendering.templates, p.overlay), rendering.data)
-	if err != nil {
-		return false, err
-	}
-
-	if session.ExitCode() != 0 {
-		return false, fmt.Errorf(string(session.Err.Contents()))
-	}
-
-	return true, nil
-}
-
-func (matcher *SatisfyTestOverlayMatcher) FailureMessage(actual interface{}) string {
-	return "Expected YAML to match expectation"
-}
-
-func (matcher *SatisfyTestOverlayMatcher) NegatedFailureMessage(actual interface{}) string {
-	return "Expected YAML not to match expectation"
-}
-
 type ProduceYAMLMatcher struct {
 	matcher types.GomegaMatcher
 }
@@ -69,7 +35,7 @@ func ProduceYAML(matcher types.GomegaMatcher) *ProduceYAMLMatcher {
 	return &ProduceYAMLMatcher{matcher}
 }
 
-func (p *ProduceYAMLMatcher) Match(actual interface{}) (bool, error) {
+func (matcher *ProduceYAMLMatcher) Match(actual interface{}) (bool, error) {
 	rendering, ok := actual.(RenderingContext)
 	if !ok {
 		return false, fmt.Errorf("ProduceYAML must be passed a RenderingContext. Got\n%s", format.Object(actual, 1))
@@ -85,7 +51,7 @@ func (p *ProduceYAMLMatcher) Match(actual interface{}) (bool, error) {
 		return false, err
 	}
 
-	return p.matcher.Match(obj)
+	return matcher.matcher.Match(obj)
 }
 
 func (matcher *ProduceYAMLMatcher) FailureMessage(actual interface{}) string {

@@ -175,7 +175,7 @@ cargo {
         List activeProfiles = System.getProperty("spring.profiles.active", "").split(",")
         jvmArgs = "-DLOGIN_CONFIG_URL=classpath:required_configuration.yml"
         if (activeProfiles.contains("debug")) {
-            jvmArgs = String.format("%s -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005", jvmArgs)
+            jvmArgs = String.format("%s -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005", jvmArgs)
         }
 
         outputFile = file("uaa/build/reports/tests/uaa-server.log")

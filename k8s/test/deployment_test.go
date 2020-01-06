@@ -14,36 +14,12 @@ var _ = Describe("Deployment", func() {
 		valuesPath = pathToTemplate(filepath.Join("values", "values.yml"))
 	})
 
-	When("Parsing YAML", func() {
-		It("Constructs the YAML from a set of files", func() {
-			ctx := NewRenderingContext(deploymentPath, valuesPath)
+	// TODO: This is an example starting point
+	It("Constructs the YAML from a set of files", func() {
+		ctx := NewRenderingContext(deploymentPath, valuesPath)
 
-			Expect(ctx).To(ProduceYAML(
-				RepresentingContainer("uaa").RunningImage("cfidentity/uaa@sha256:93b70b26fbb3de88d93728b0daf1ea7b001fde89a24e283c3db36bf4c6af087c"),
-			))
-		})
-
-		It("Constructs YAML from a set of files and command line values ", func() {
-			ctx := NewRenderingContext(deploymentPath, valuesPath).WithData(map[string]string{
-				"image_sha": "other",
-			})
-
-			Expect(ctx).To(ProduceYAML(RepresentingContainer("uaa").RunningImage("cfidentity/uaa@sha256:other")))
-		})
-	})
-
-	When("Using YTT test overlays", func() {
-		It("Constructs the YAML from a set of files", func() {
-			ctx := NewRenderingContext(deploymentPath, valuesPath)
-			Expect(ctx).To(SatisfyTestOverlay(pathToTestOverlay("image_test.yml")))
-		})
-
-		It("Constructs YAML from a set of files and command line values ", func() {
-			ctx := NewRenderingContext(deploymentPath, valuesPath).WithData(map[string]string{
-				"image_sha": "other",
-			})
-
-			Expect(ctx).To(SatisfyTestOverlay(pathToTestOverlay("image_override_test.yml")))
-		})
+		Expect(ctx).To(ProduceYAML(
+			RepresentingContainer("uaa").RunningImage("cfidentity/uaa@sha256:93b70b26fbb3de88d93728b0daf1ea7b001fde89a24e283c3db36bf4c6af087c"),
+		))
 	})
 })
